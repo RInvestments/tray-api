@@ -1,0 +1,5 @@
+equities_db*
+equities_db/*
+*.pyc
+html/*
+*.swp
