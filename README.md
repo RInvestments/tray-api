@@ -45,6 +45,8 @@ The api is organized into 2 parts.
     * Of sectors given an industry
 
 
+## Presentable Info
+* http://127.0.0.1:5000/industryInfo/collapsibleList/
 
 ## Data on Ticker
 This section is about info (timed and untimed) about a ticker.
