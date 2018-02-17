@@ -3,3 +3,4 @@ equities_db/*
 *.pyc
 html/*
 *.swp
+flask_cheatsheet.pdf
