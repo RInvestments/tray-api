@@ -4,38 +4,57 @@
         Author  : Manohar Kuse
 """
 
-from flask import Flask, redirect, url_for
-import code
+from flask import Flask, redirect, url_for, request
+
 
 app = Flask( __name__ )
-app.config.from_pyfile( 'config.py')
-
-
+app.config.from_pyfile( 'blue/config_var.py')
 
 
 db = 0 #init mongodb here
 
-#from views import * #direct routes
-#from blue.site.routes import mod as xsite #site blueprint
-#from blue.api.routes import mod as xapi   # other blueprints
 
+############################################
+########## OAuth - flask_dance #############
+############################################
 from flask_dance.contrib.github import make_github_blueprint, github
 github_blueprint = make_github_blueprint( client_id="12ed11d1c1a4aebadeaf", client_secret="8d4cd826b3ad43fa945cdb53f37567ac0035121b" )
 
 
-# code.interact( local=locals() )
-#app.register_blueprint( xsite )
+
+#############################################
+######### Import Custom Blueprints ##########
+#############################################
+# Import Blueprints
+from blue.site.routes import mod as xsite #site blueprint
+#from blue.api.routes import mod as xapi   # other blueprints
+
+# Register Blueprints
+app.register_blueprint( xsite, url_prefix='/mysite' )
 #app.register_blueprint( xapi, url_prefix='/api' )
 app.register_blueprint( github_blueprint, url_prefix="/login")
 
 
+
+############################################
+############## Authorize_me ################
+############################################
+@app.route( "/authorize_me")
+def authorize_me():
+    if not github.authorized:
+        return redirect( url_for("github.login",  next=request.url) )
+    resp = github.get( "/user")
+
+    to_return = "<h1>You are Authorized</h1>Authorized github user: " + resp.json()['login']
+    to_return += '<p>' + str( resp.json() )
+    return to_return
+
+
+
 @app.route( "/")
 def index():
-    if not github.authorized:
-        return redirect( url_for("github.login") )
-    resp = github.get( "/user")
-    return "github username: " + resp.json()['login']
-    return "resp: " + str( resp.json() )
+    return "<h1>Welcome to tray-api!</h1>"
+
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')
