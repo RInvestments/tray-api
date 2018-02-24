@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from ..config import login_required
+from ..config import q_ticker
 
 mod = Blueprint( 'site', __name__ )
 
@@ -12,7 +13,8 @@ def index():
 def secret_page():
     return 'This is a secret_page in mysite'
 
-@mod.route( '/get', methods=['GET', 'POST'] )
+
+@mod.route( '/getCompany', methods=['GET', 'POST'] )
 @login_required
-def get():
-    return 'dd:<pre>'+str(request)+'</pre>'
+def getCompany():
+    return 'dd:'+q_ticker.getCompanyName( '2333.HK')

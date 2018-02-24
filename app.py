@@ -27,12 +27,13 @@ github_blueprint = make_github_blueprint( client_id="12ed11d1c1a4aebadeaf", clie
 #############################################
 # Import Blueprints
 from blue.site.routes import mod as xsite #site blueprint
-#from blue.api.routes import mod as xapi   # other blueprints
+from blue.api.routes_ticker import mod as xticker   # other blueprints
 
 # Register Blueprints
-app.register_blueprint( xsite, url_prefix='/mysite' )
-#app.register_blueprint( xapi, url_prefix='/api' )
-app.register_blueprint( github_blueprint, url_prefix="/login")
+app.register_blueprint( xsite, url_prefix='/mysite' ) #try
+app.register_blueprint( xticker, url_prefix='/tickerInfo' )
+
+app.register_blueprint( github_blueprint, url_prefix="/login") #Github Authorization
 
 
 

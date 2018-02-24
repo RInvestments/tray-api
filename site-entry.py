@@ -51,7 +51,7 @@ def lookup_ticker_timeless_info( ticker, datum ):
 
     alias['employees'] = ave.getTickerEmployeesNumber
     alias['address'] = ave.getTickerStreetAddress
-
+ 
 
     if datum in alias.keys():
         return str( (alias[datum])( str(ticker) ) )
