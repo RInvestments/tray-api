@@ -11,6 +11,7 @@ from flask import g, request, redirect, url_for, abort
 from flask_dance.contrib.github import github
 
 from dbingress.TickerQueries import TickerQueries
+from dbingress.IndustryQueries import IndustryQueries
 from dbingress.IncomeStatementQueries import IncomeStatementQueries
 from dbingress.BalanceSheetQueries import BalanceSheetQueries
 from dbingress.CashFlowQueries import CashFlowQueries
@@ -35,6 +36,7 @@ def login_required(f):
 ###
 MONGO_URI = 'mongodb://localhost:27017/'
 q_ticker = TickerQueries( MONGO_URI )
+q_industry = IndustryQueries( MONGO_URI )
 q_income = IncomeStatementQueries( MONGO_URI )
 q_balance_sht = BalanceSheetQueries( MONGO_URI )
 q_cashflw = CashFlowQueries( MONGO_URI )

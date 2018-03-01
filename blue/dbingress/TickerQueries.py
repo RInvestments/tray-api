@@ -166,8 +166,9 @@ class TickerQueries(DBBase):
 
 
         # query['type5'] = item_string1#'Sales/Revenue'
-        query['type5'] = {}
-        query['type5']['$in'] = self.to_json_list( colon_separated_list=str(item_string1), key=None )
+        if item_string1 is not None:
+            query['type5'] = {}
+            query['type5']['$in'] = self.to_json_list( colon_separated_list=str(item_string1), key=None )
         query['type6'] = item_string2#'None'
         query['type7'] = item_string3#'None'
 
@@ -231,8 +232,9 @@ class TickerQueries(DBBase):
             query['type4'] = {}
             query['type4']['$in'] = self.to_json_list( colon_separated_list=str(year), key=None, dtype='int32' )
 
-        query['type5'] = {}
-        query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
+        if item_string is not None:
+            query['type5'] = {}
+            query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
         query['type6'] = item_string2#'None'
         query['type7'] = item_string3#'None'
 
@@ -299,8 +301,9 @@ class TickerQueries(DBBase):
             query['type4'] = {}
             query['type4']['$in'] = self.to_json_list( colon_separated_list=str(year), key=None, dtype='int32' )
 
-        query['type5'] = {}
-        query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
+        if item_string is not None:
+            query['type5'] = {}
+            query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
         query['type6'] = item_string2#'None'
         query['type7'] = item_string3#'None'
         # return str(query)
@@ -366,8 +369,9 @@ class TickerQueries(DBBase):
             query['type4']['$in'] = self.to_json_list( colon_separated_list=str(year), key=None, dtype='int32' )
 
 
-        query['type5'] = {}
-        query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
+        if item_string is not None:
+            query['type5'] = {}
+            query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
         query['type6'] = item_string2#'None'
         query['type7'] = item_string3#'None'
         # return str(query)
@@ -432,8 +436,9 @@ class TickerQueries(DBBase):
             query['type4']['$in'] = self.to_json_list( colon_separated_list=str(year), key=None, dtype='int32' )
 
 
-        query['type5'] = {}
-        query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
+        if item_string is not None:
+            query['type5'] = {}
+            query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
         query['type6'] = item_string2#'None'
         query['type7'] = item_string3#'None'
         # return str(query)
@@ -498,8 +503,9 @@ class TickerQueries(DBBase):
             query['type4']['$in'] = self.to_json_list( colon_separated_list=str(year), key=None, dtype='int32' )
 
 
-        query['type5'] = {}
-        query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
+        if item_string is not None:
+            query['type5'] = {}
+            query['type5']['$in'] = self.to_json_list(colon_separated_list=str(item_string), key=None )#'Total Assets'
         query['type6'] = item_string2#'None'
         query['type7'] = item_string3#'None'
         # return str(query)
