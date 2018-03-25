@@ -10,7 +10,13 @@ from blue.config import q_quotes
 from pprint import pprint
 
 
-q_quotes.lastest_quote( '2333.HK:1211.HK:AMZN.NASDAQ')
+#print q_quotes.lastest_quote( '2333.HK:1211.HK:AMZN.NASDAQ')
+# QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date='2017-02-01', end_date='2017-02-09')
+QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date='2017-02-01', end_date=None)
+# QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date=None, end_date='2017-02-09')
+# print QE
+print QE['2333.HK'][0]['datetime'], '----->', QE['2333.HK'][-1]['datetime']
+
 quit()
 
 industry_list =  q_industry.getIndustryList( 'BSE:HK' )
