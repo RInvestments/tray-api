@@ -10,6 +10,9 @@ from functools import wraps
 from flask import g, request, redirect, url_for, abort
 from flask_dance.contrib.github import github
 
+import pymongo
+import os
+
 from dbingress.TickerQueries import TickerQueries
 from dbingress.IndustryQueries import IndustryQueries
 from dbingress.IncomeStatementQueries import IncomeStatementQueries
@@ -32,11 +35,45 @@ def login_required(f):
 
 
 ###
-### DataBase
+### Database connection try-except
 ###
-MONGO_URI = 'mongodb://localhost:27017/'
-q_ticker = TickerQueries( MONGO_URI )
-q_industry = IndustryQueries( MONGO_URI )
-q_income = IncomeStatementQueries( MONGO_URI )
-q_balance_sht = BalanceSheetQueries( MONGO_URI )
-q_cashflw = CashFlowQueries( MONGO_URI )
+def connect_mongodb(MONGO_URI, lazy_connection=False):
+    """Set up a connection to the MongoDB server.
+
+    Parameters:
+        MONGO_URI: MongoDB server address (including username & pass).
+        lazy_connection: avoid testing if the connection is working while
+            initializing it.
+    """
+    print 'Attempt Connection to: ', MONGO_URI
+    client = pymongo.MongoClient(MONGO_URI )
+
+    if lazy_connection:
+        return client
+
+    # Send a query to the server to see if the connection is working.
+    try:
+        client.server_info()
+    except pymongo.errors.PyMongoError as e:
+        print e
+        client = None
+
+    return client
+
+###
+### Query Handles
+###
+try:
+    print 'Looking up environment variable : $MONGO_URI'
+    MONGO_URI = os.environ['MONGO_URI']
+    print 'Found environment variable : $MONGO_URI'
+except:
+    print 'Environment variable $MONGO_URI not found. Now using mongodb://localhost:27017/'
+    MONGO_URI = 'mongodb://localhost:27017/'
+client = connect_mongodb( MONGO_URI )
+
+q_ticker = TickerQueries( client )
+q_industry = IndustryQueries( client )
+q_income = IncomeStatementQueries( client )
+q_balance_sht = BalanceSheetQueries( client )
+q_cashflw = CashFlowQueries( client )

@@ -178,11 +178,11 @@ class TickerQueries(DBBase):
 
         to_return = {}
         for p in pcursor:
-            print '---'
-            print p['ticker']
-            print p['type4'] # year
-            print item_string1, p['value_string'] # raw value
-            print item_string1, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
+            #print '---'
+            #print p['ticker']
+            #print p['type4'] # year
+            #print item_string1, p['value_string'] # raw value
+            #print item_string1, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
 
             if p['ticker'] not in to_return.keys():
                 to_return[ p['ticker'] ] = {}
@@ -246,11 +246,11 @@ class TickerQueries(DBBase):
 
         to_return = {}
         for p in pcursor:
-            print '---'
-            print p['ticker']
-            print p['type4'] # year
-            print item_string, p['value_string'] # raw value
-            print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
+            #print '---'
+            #print p['ticker']
+            #print p['type4'] # year
+            #print item_string, p['value_string'] # raw value
+            #print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
 
             if p['ticker'] not in to_return.keys():
                 to_return[ p['ticker'] ] = {}
@@ -313,11 +313,11 @@ class TickerQueries(DBBase):
 
         to_return = {}
         for p in pcursor:
-            print '---'
-            print p['ticker']
-            print p['type4'] # year
-            print item_string, p['value_string'] # raw value
-            print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
+            #print '---'
+            #print p['ticker']
+            #print p['type4'] # year
+            #print item_string, p['value_string'] # raw value
+            #print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
 
             if p['ticker'] not in to_return.keys():
                 to_return[ p['ticker'] ] = {}
@@ -381,11 +381,11 @@ class TickerQueries(DBBase):
 
         to_return = {}
         for p in pcursor:
-            print '---'
-            print p['ticker']
-            print p['type4'] # year
-            print item_string, p['value_string'] # raw value
-            print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
+            #print '---'
+            #print p['ticker']
+            #print p['type4'] # year
+            #print item_string, p['value_string'] # raw value
+            #print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
 
             if p['ticker'] not in to_return.keys():
                 to_return[ p['ticker'] ] = {}
@@ -448,11 +448,11 @@ class TickerQueries(DBBase):
 
         to_return = {}
         for p in pcursor:
-            print '---'
-            print p['ticker']
-            print p['type4'] # year
-            print item_string, p['value_string'] # raw value
-            print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
+            #print '---'
+            #print p['ticker']
+            #print p['type4'] # year
+            #print item_string, p['value_string'] # raw value
+            #print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
 
             if p['ticker'] not in to_return.keys():
                 to_return[ p['ticker'] ] = {}
@@ -515,11 +515,11 @@ class TickerQueries(DBBase):
 
         to_return = {}
         for p in pcursor:
-            print '---'
-            print p['ticker']
-            print p['type4'] # year
-            print item_string, p['value_string'] # raw value
-            print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
+            #print '---'
+            #print p['ticker']
+            #print p['type4'] # year
+            #print item_string, p['value_string'] # raw value
+            #print item_string, float(p['val']) * float(p['fiscal_mul']) # processed and uniformed value. Will be in Millions, but in local currency
 
             if p['ticker'] not in to_return.keys():
                 to_return[ p['ticker'] ] = {}

@@ -7,10 +7,8 @@
 from pymongo import MongoClient
 
 class DBBase:
-    def __init__(self, mongodb_uri):
-        #TODO: Have a try-except block and error reporting.
-        print 'Connecting to ', mongodb_uri
-        self.client = MongoClient( mongodb_uri )
+    def __init__(self, client):
+        self.client = client 
         # self.db =
 
 
