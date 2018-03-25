@@ -59,7 +59,6 @@ class QuotesQueries(DBBase):
             query['datetime']["$gt"] = datetime.datetime.strptime( start_date, '%Y-%m-%d' )
         if end_date is not None:
             query['datetime']["$lt"] = datetime.datetime.strptime( end_date, '%Y-%m-%d' )
-        code.interact( local=locals() )
 
         result = self.quote_db.find( query ).sort( [ ('ticker', ASCENDING), ('datetime', ASCENDING) ] )
         to_return = {}
