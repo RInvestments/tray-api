@@ -2,11 +2,16 @@ from blue.config import q_ticker
 from blue.config import q_income
 from blue.config import q_balance_sht
 from blue.config import q_cashflw
-
 from blue.config import q_industry
+from blue.config import q_quotes
+
+
 
 from pprint import pprint
 
+
+q_quotes.lastest_quote( '2333.HK:1211.HK:AMZN.NASDAQ')
+quit()
 
 industry_list =  q_industry.getIndustryList( 'BSE:HK' )
 print industry_list

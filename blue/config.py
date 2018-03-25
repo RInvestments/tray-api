@@ -18,6 +18,7 @@ from dbingress.IndustryQueries import IndustryQueries
 from dbingress.IncomeStatementQueries import IncomeStatementQueries
 from dbingress.BalanceSheetQueries import BalanceSheetQueries
 from dbingress.CashFlowQueries import CashFlowQueries
+from dbingress.QuotesQueries import QuotesQueries
 
 ###
 ### Authorization
@@ -77,3 +78,4 @@ q_industry = IndustryQueries( client )
 q_income = IncomeStatementQueries( client )
 q_balance_sht = BalanceSheetQueries( client )
 q_cashflw = CashFlowQueries( client )
+q_quotes = QuotesQueries( client )
