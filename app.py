@@ -18,10 +18,10 @@ app.config.from_pyfile( 'blue/config_var.py')
 from flask_dance.contrib.github import make_github_blueprint, github
 
 try:
-    # github_blueprint = make_github_blueprint( client_id="12ed11d1c1a4aebadeaf", client_secret="8d4cd826b3ad43fa945cdb53f37567ac0035121b" )
     github_blueprint = make_github_blueprint( client_id=os.environ['GITHUB_CLIENT_ID'], client_secret=os.environ['GITHUB_CLIENT_SECRET'] )
+    print 'Using shell evirons $GITHUB_CLIENT_ID and $GITHUB_CLIENT_SECRET'
 except:
-    print 'ERROR. Cannot set oauth with github. Make sure '
+    print 'ERROR. Cannot set oauth with github. Make sure $GITHUB_CLIENT_ID and $GITHUB_CLIENT_SECRET are available'
     quit()
 
 
