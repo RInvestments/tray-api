@@ -9,13 +9,18 @@ from blue.config import q_quotes
 
 from pprint import pprint
 
-
-#print q_quotes.lastest_quote( '2333.HK:1211.HK:AMZN.NASDAQ')
-# QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date='2017-02-01', end_date='2017-02-09')
-QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date='2017-02-01', end_date=None)
+ticker_string = '0001.HK:1211.HK:GOOG.NASDAQ:AMZN.NASDAQ:20MICRONS.NSE:500002.BSE:1301.TYO'
+# QE = q_quotes.lastest_quote( ticker_string )
+QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date='2017-02-01', end_date='2017-02-09')
+# QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date='2017-02-01', end_date=None)
 # QE = q_quotes.range_quote( '2333.HK:1211.HK', start_date=None, end_date='2017-02-09')
+# QE = q_quotes.range_quote( '0001.HK:1211.HK:GOOG.NASDAQ:AMZN.NASDAQ', start_date=None, end_date='2017-02-09')
 # print QE
-print QE['2333.HK'][0]['datetime'], '----->', QE['2333.HK'][-1]['datetime']
+# for k in QE.keys():
+    # print k, QE[k][0]['datetime'], '----->', QE[k][-1]['datetime']
+
+
+# QE = q_quotes.date_quote( '1211.HK:500002.BSE:GOOG.NASDAQ:AMZN.NASDAQ', '2017-02-27:2017-02-28' )
 
 quit()
 

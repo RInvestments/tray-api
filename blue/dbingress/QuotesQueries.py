@@ -38,6 +38,33 @@ class QuotesQueries(DBBase):
                 to_return[ _t ] = r
         return to_return
 
+    def date_quote( self, ticker, date ):
+        """ Input a list of tickers and list of dates, returns quotes at those dates """
+
+        query = {}
+        query['ticker'] = {}
+        query['ticker']['$in'] = self.to_json_list( colon_separated_list=ticker, key=None )
+
+        datetime_list = []
+        for d in date.split( ':' ):
+            datetime_list.append( datetime.datetime.strptime( d, '%Y-%m-%d' ) )
+
+        query['datetime'] = {}
+        query['datetime']['$in' ] = datetime_list
+        result = self.quote_db.find( query ).sort( [ ('ticker', ASCENDING), ('datetime', ASCENDING) ] )
+
+        to_return = {}
+        for r in result:
+            del r['_id']
+            del r['id']
+            if r['ticker'] not in to_return.keys():
+                to_return[ r['ticker'] ] = []
+
+            to_return[ r['ticker']].append( r )
+
+        return to_return
+
+
     def range_quote( self, ticker, start_date, end_date ):
         """ input ticker and date range. WIll giveout quote data in daterange for all the tickers
 
@@ -59,7 +86,6 @@ class QuotesQueries(DBBase):
             query['datetime']["$gt"] = datetime.datetime.strptime( start_date, '%Y-%m-%d' )
         if end_date is not None:
             query['datetime']["$lt"] = datetime.datetime.strptime( end_date, '%Y-%m-%d' )
-
         result = self.quote_db.find( query ).sort( [ ('ticker', ASCENDING), ('datetime', ASCENDING) ] )
         to_return = {}
         for r in result:
@@ -68,7 +94,6 @@ class QuotesQueries(DBBase):
             if r['ticker'] not in to_return.keys():
                 to_return[ r['ticker'] ] = []
 
-
             to_return[ r['ticker']].append( r )
-            # print r
+
         return to_return
