@@ -1,193 +1,86 @@
 # Flask site for sun dance.
 
 Currently we use flask to provide easy to use API of the database info, for other web applications.
-The entire flask site is organized under `/flask-site`.
-It queries data from the mongodb database.
+The whole application is organized using flask-blueprints. I rely on OAuth (flask-dance) for
+authentication. Currently using OAuth from github for authorizing data access. Also using https (secure)
+for connection and mongodb with special user-role to access the data.
 
 
 ## How to run
+Before you could run, you need to set bash environment variables.
+
+- For mongodb access (URL+Password)
+
+        ```
+        export MONGO_URI=mongodb://<mongodb_username>:<mongodb_password>@<mongodb_server>/default_db?authSource=admin
+        ```
+
+- For github OAuth
+
+        ```
+        export GITHUB_CLIENT_ID=<your github Oauth client id>
+        export GITHUB_CLIENT_SECRET=<your github Oauth secret>
+        ```
+
+
 ```
-export FLASK_APP=site-entry.py
-export FLASK_DEBUG=1
-
-python -m flask run
-
+python app.py
 ```
 
-source run.sh
+Ofcourse you can run this with nginx or gunicorn or any other webserver. But currently only using the
+internal webserver.
 
 
 ## Webservice Info
-`site-entry.py` provides for main of the web based interface. Currently,
-we provide some simple web based tools to get info from the database. We
-also provide a API under `/api/` of the flask site. For a more detailed
-and upto date info have a look at `site-entry.py` which defines an URL
-and its associated callback functions.
+`app.py` provides for main of the web based interface. Mongodb and other config is
+in `config.py`. I have defined a package named `blue`. The subpackage `api` defines all the
+routes blueprints. The subpackage `dbingress` defines all the classes which do the mongodb
+queries. All the classes are derived from the base class `DBBase`.
 
-Note that these call back functions
-are not supposed to query the database directly, but it is to be done
-using the `MongoQuery` class provided in file `MongoQuery.py`. This
-class provides various functions to query the mongodb database. In the future
-can create more classes to give access to various parts of database.
+There are 4 blueprints defined, each associated with a set of database queries. More will be
+added in the future as per needs. To access any of the URLs you need to authenticate using OAuth from
+github. To do that you need to create a github app and set the github info correctly. Put an issue, I can help
+you set it up.
 
-The api is organized into 2 parts.
+### ticker queries
+These queries give information for an input ticker, for example description, employess count, etc.
+Multiple tickers can be provided as ':' separated. Eg. '2333.HK:AMZN.NASDAQ:1301.TYO' etc.
 
-- Returns a data item about a ticker
-    * Only ticker name is required, eg. company name etc, [here](#info), [here](#info-details)
-    * Data on income statement. Needs ticker name, field name, year/quater [here](#info-on-income-statement)
-    * Data on balance sheet. Needs ticker name, field name, year/quater [here](#info-on-balance-sheet)
-    * Data on cashflow statement sheet. Needs ticker name, field name, year/quater [here](#info-on-cashflow-statement)
-    * Daily quote [here](#quote-data)
-
-- Returns a list
-    * Of companies given a (industry, sector) pair.
-    * Of industries
-    * Of sectors given an industry
+- /tickerInfo/`ticker`/name
+- /tickerInfo/`ticker`/industry
+- /tickerInfo/`ticker`/sector
+- /tickerInfo/`ticker`/description
+- /tickerInfo/`ticker`/employeeCount
+- /tickerInfo/`ticker`/streetAddress
+- /tickerInfo/`ticker`/accountingCurrency/<year>
 
 
-## Presentable Info
-* http://127.0.0.1:5000/industryInfo/collapsibleList/
+### accounting statement queries
+These queries give information on accounting statements, viz. incomestatement (is), balance sheet (assets, liabs),
+cash flow statement (cf_op, cf_inv, cf_fin). year can have value `all`, which will giveout data for all available years.
+items can have value `all` which will giveout all available items in the statement. `/raw` gives string info.
 
-## Data on Ticker
-This section is about info (timed and untimed) about a ticker.
-Use the URLs below to get the needed info.
-
-### Info
-URL : ``/api/info/<ticker>``<br/>
+- /accountingStatements/`ticker`/`statement`/`year`/`items`
+- /accountingStatements/`ticker`/`statement`/`year`/`items`/raw
 
 
-### Info Details
-URL : ``/api/info/<ticker>/<datum>``<br/>
+### industry info queries
+These give out information on industry and sector. For example, it can give you industry list, sector list and tickers in a particular
+(industry, sector) tuple. The url parameters viz, bourse, industry, sector can have value `all`.
 
-datum :
-```json
-"is_keys": [
-  "sector",
-  "industry",
-  "description",
-  "name",
-  "desc"
-  "employees"
-  "address"
-]
-```
+- /industryInfo/`bourse`
+- /industryInfo/`bourse`/`industry`
+- /industryInfo/`bourse`/`industry`/`sector`
 
 
-### Info on Income Statement
-URL : ``/api/info/<ticker>/is/<datum>/<int:year>``<br/>
+### quotes queries
+These give info on daily quotes data. Currently quotes data is not available for Shenzen(SZ) and Shanghai(SH). It is available for
+Hong Kong (HK), BSE, NSE, NASDAQ, NYSE, Tokyo (TYO). `Ticker` and `on_date` can have multiple values, ':' separated.  start_date
+and end_date can only have single value. Date need to be in format YYYY-MM-DD.
 
-year : Eg. 2016, 20160630 etc.  
-
-datum :
-```json
-is_keys: [
-    "income_gross",
-    "revenue",
-    "cogs",
-    "expense_tax",
-    "income_pretax",
-    "expense_interest",
-    "eps_diluted",
-    "income_net",
-    "eps_basic",
-    "expense_sga",
-    "ebit",
-    "eps",
-    "ebitda",
-    "shares_outstanding"
-]
-```
-
-### Info on Balance Sheet
-URL : ``/api/info/<ticker>/bs/<datum>/<int:year>``<br/>
-
-datum :
-```json
-Assets: [
-    "total_investment_advances",
-    "total_current_assets",
-    "short_term_investments",
-    "ppe",
-    "long_term_receivable",
-    "cash",
-    "other_assets",
-    "total_accounts_receivable",
-    "total_assets",
-    "intangible_assets",
-    "inventories",
-    "other_current_assets"
-],
-
-Liabilities: [
-    "debt_payment_long_term",
-    "total_current_liabilities",
-    "other_liabilities",
-    "accounts_payable",
-    "quick_ratio",
-    "cash_ratio",
-    "other_current_liabilities",
-    "current_ratio",
-    "total_liabilities",
-    "income_tax_payable",
-    "debt_payment_short_term"
-]
-```
-
-### Info on Cashflow Statement
-URL : ``/api/info/<ticker>/cf/<datum>/<int:year>``<br/>
-
-datum :
-```json
-Operating Activity: [
-    "net_operating_cashflow"
-],
-Investing Activity: [
-    "acquisitions",
-    "capital_expense",
-    "net_investing_cashflow",
-    "from_financial_instruments",
-    "sale_of_assets"
-],
-Financing Activity: [
-    "debt_reduction",
-    "dividend_paid",
-    "net_financing_cashflow",
-    "net_change_in_cash",
-    "free_cashflow"
-]
-```
-
-### Quote Data
-URL : ``/api/info/<ticker>/quote/<field>/<date>``
-date : 2016-07-15. Not giving date will return latest quote.
-
-field :
-```json
-['close', 'close_adj', 'volume', 'datetime', 'inserted_on', 'open', 'high', 'low']
-```
-
-
-
-## Returns a list
-These set of urls provides various lists
-
-### Companies List
-URL : `/api/list/<industry>/<sector>/company_list/<xchange>`
-
-This is the most useful function. xchange set to None will give companies from all exchanges. Can also specify xchange like HK. Currently comma
-separated list is not supported. Will implement this later.
-
-### Industry List
-URL : ``/api/list/industry_list``
-
-Returns a comma separated list of industries.
-
-### Sector List
-URL : ``/api/list/<industry>/sector_list'``
-
-Returns a comma separated list of sectors of
-specified industry.
-
+- /tickerQuotesInfo/`ticker`/
+- /tickerQuotesInfo/`ticker`/`start_date`/`end_date`
+- /tickerQuotesInfo/`ticker`/`on_date`
 
 
 
