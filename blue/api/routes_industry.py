@@ -11,27 +11,46 @@ from ..config import q_ticker, q_industry
 mod = Blueprint( __file__, __name__)
 
 
-@mod.route( '/ls/<bourse>' )
-@mod.route( '/ls' )
+
+@mod.route( '/<bourse>/')
 @login_required
-def lookup_industry_list( bourse=None  ):
+def j_industry_list( bourse ):
+    if bourse == 'all':
+        bourse = None
     return jsonify( q_industry.getIndustryList( bourse ) )
-    return 'ls'+str(bourse)
 
-# @mod.route( '/<industry>/<bourse>' )
-@mod.route( '/<industry>/' )
-@login_required
-def lookup_sector_list( industry, bourse=None ):
-    if industry == 'all':
-        return jsonify(  q_industry.getSectorsOf( None, bourse=bourse )  )
-    return jsonify(  q_industry.getSectorsOf( industry, bourse=bourse )  )
 
-@mod.route( '/<industry>/<sector>/<bourse>' )
-@mod.route( '/<industry>/<sector>/' )
+
+@mod.route( '/<bourse>/<industry>')
 @login_required
-def lookup_ticker_list( industry, sector, bourse=None ):
+def j_sector_list( bourse, industry ):
+    if bourse == 'all':
+        bourse = None
+
     if industry == 'all':
         industry = None
+
+    if industry is not None:
+        industry = industry.replace( '_', '/')
+
+    return jsonify( q_industry.getSectorsOf( industry, bourse=bourse ) )
+
+@mod.route( '/<bourse>/<industry>/<sector>')
+@login_required
+def j_ticker_list( bourse, industry, sector ):
+    if bourse == 'all':
+        bourse = None
+
+    if industry == 'all':
+        industry = None
+
+    if industry is not None:
+        industry = industry.replace( '_', '/')
+
     if sector == 'all':
         sector = None
-    return jsonify(  q_industry.getTickersOf( industry, sector, bourse=bourse )  )
+
+    if sector is not None:
+        sector = sector.replace( '_', '/')
+
+    return jsonify( q_industry.getTickersOf( industry, sector, bourse=bourse ) )

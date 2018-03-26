@@ -34,12 +34,14 @@ from blue.site.routes import mod as xsite #site blueprint
 from blue.api.routes_ticker import mod as xticker   # other blueprints
 from blue.api.routes_accounting_statements import mod as xstatements   # other blueprints
 from blue.api.routes_industry import mod as xindustry   # other blueprints
+from blue.api.routes_quotes import mod as xquote   # other blueprints
 
 # Register Blueprints
 app.register_blueprint( xsite, url_prefix='/mysite' ) #try
 app.register_blueprint( xticker, url_prefix='/tickerInfo' )
 app.register_blueprint( xstatements, url_prefix='/accountingStatements' )
 app.register_blueprint( xindustry, url_prefix='/industryInfo' )
+app.register_blueprint( xquote, url_prefix='/tickerQuotesInfo' )
 
 app.register_blueprint( github_blueprint, url_prefix="/login") #Github Authorization
 

@@ -98,6 +98,6 @@ class IndustryQueries(DBBase):
                 to_return[ _industry ][ _sector ] = {}
 
             if _ticker not in to_return[_industry][_sector].keys():
-                to_return[_industry][_sector][_ticker] = {}
+                to_return[_industry][_sector][_ticker] = {'companyName': p['value_string']}
 
         return to_return
