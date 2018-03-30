@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+</style>
+<body>
+  <div id="companies" style="width:800px; float: right;">
+  </div>
+
+  <!-- <div id="debug" style="float: right;">fdhf<br/>dhfdf</div> -->
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script>
+var selection = {}
+var original_json_data;
+function add_item( d ){
+  if( d.flag == "sector") {
+    if(!selection[d.parent.name])
+      selection[d.parent.name] = {}
+    selection[d.parent.name][d.name] = []
+    for( ticker in original_json_data[d.parent.name][d.name] ){
+      companyName = original_json_data[d.parent.name][d.name][ticker].companyName
+      selection[d.parent.name][d.name].push( {'ticker': ticker, 'companyName': companyName} )
+    }
+  }
+
+  if( d.flag == "industry") {
+
+  }
+
+}
+
+function remove_item( d )
+{
+  if( d.flag == "sector") {
+    delete selection[d.parent.name][d.name]
+  }
+
+  if( d.flag == "industry" ) {
+    //delete selection[d.name]
+  }
+
+}
+
+function selection_to_table()
+{
+  d3.select( "#companies" ).html( "" )
+  d3.select( "#companies" ).append( "table" ).attr( "id", "the_table" );
+  for( industry in selection ) {
+    for( sector in selection[industry] ) {
+      for( t in selection[industry][sector] ) {
+        tr = d3.select( "#the_table").append( "tr" );
+        tr.append( "td" ).html(t);
+        tr.append( "td" ).html(industry);
+        tr.append( "td" ).html(sector);
+        tr.append( "td" ).html(selection[industry][sector][t].ticker);
+        tr.append( "td" ).html(selection[industry][sector][t].companyName);
+
+          // "<td>"t+"</td>"+
+          // "<td>"+selection[industry][sector][t].ticker+'</td>'+
+          // '<td>'+selection[industry][sector][t].companyName +'</td>'
+          // );
+      }
+    }
+  }
+
+}
+
+var margin = {top: 20, right: 120, bottom: 20, left: 120},
+    width = 960 - margin.right - margin.left,
+    height = 800 - margin.top - margin.bottom;
+
+var i = 0,
+    duration = 750,
+    root;
+
+var tree = d3.layout.tree()
+    .size([height, width]);
+
+var diagonal = d3.svg.diagonal()
+    .projection(function(d) { return [d.y, d.x]; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .attr("style", "float: left");
+
+d3.json("/industryInfo/all/all/all", function(error, flare) {
+  if (error) throw error;
+
+  //convert my json to flare format,
+  original_json_data = flare;
+  var xflare = {}
+  xflare.name = "flare"
+  xflare.flag = "root"
+  xflare.children = []
+
+
+
+
+  for( industry in flare ) {
+    p = { "name": industry, "flag": "industry" }
+    p['children'] = [];
+    for( sector in flare[industry] ) {
+      q = { 'name': sector, 'flag': 'sector' };
+      q['children'] = [ {'name': 'a'} ] ;
+      q['ticker'] = []
+      for( company in flare[industry][sector] ) {
+        q.ticker.push( {"ticker": company, "flag": "ticker" } )
+      }
+      p.children.push( q );
+    }
+    xflare.children.push( p );
+
+  }
+
+
+  // root = flare;
+  root = xflare;
+  root.x0 = height / 2;
+  root.y0 = 0;
+
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
+
+  root.children.forEach(collapse);
+  update(root);
+});
+
+d3.select(self.frameElement).style("height", "800px");
+
+function update(source) {
+
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+      links = tree.links(nodes);
+
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 180; });
+
+  // Update the nodes…
+  var node = svg.selectAll("g.node")
+      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+  // Enter any new nodes at the parent's previous position.
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+      .on("click", click);
+
+  nodeEnter.append("circle")
+      .attr("r", 1e-6)
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+  nodeEnter.append("text")
+      .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+      .attr("dy", ".35em")
+      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+      .text(function(d) { return d.name; })
+      .style("fill-opacity", 1e-6);
+
+  // Transition nodes to their new position.
+  var nodeUpdate = node.transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+  nodeUpdate.select("circle")
+      .attr("r", 4.5)
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+  nodeUpdate.select("text")
+      .style("fill-opacity", 1);
+
+  // Transition exiting nodes to the parent's new position.
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+      .remove();
+
+  nodeExit.select("circle")
+      .attr("r", 1e-6);
+
+  nodeExit.select("text")
+      .style("fill-opacity", 1e-6);
+
+  // Update the links…
+  var link = svg.selectAll("path.link")
+      .data(links, function(d) { return d.target.id; });
+
+  // Enter any new links at the parent's previous position.
+  link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return diagonal({source: o, target: o});
+      });
+
+  // Transition links to their new position.
+  link.transition()
+      .duration(duration)
+      .attr("d", diagonal);
+
+  // Transition exiting nodes to the parent's new position.
+  link.exit().transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var o = {x: source.x, y: source.y};
+        return diagonal({source: o, target: o});
+      })
+      .remove();
+
+  // Stash the old positions for transition.
+  nodes.forEach(function(d) {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+}
+
+// Toggle children on click.
+function click(d) {
+
+  if (d.children) {
+    // This collapses
+    // d3.select( "#debug" ).append( 'p' ).html( 'close '+d.name+' '+d.flag )
+    remove_item( d )
+
+
+    d._children = d.children;
+    d.children = null;
+  } else {
+    // This expands
+    // d3.select( "#debug" ).append( 'p' ).html( 'open '+d.name+' '+d.flag )
+    add_item( d );
+
+
+    if( d.flag == 'sector' ) {
+      d.ticker_list = d._children
+    }
+
+    d.children = d._children;
+    d._children = null;
+  }
+  update(d);
+  selection_to_table();
+}
+
+
+</script>

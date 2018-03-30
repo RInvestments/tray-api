@@ -6,8 +6,10 @@
 
 from flask import Flask, redirect, url_for, request
 import os
+#from flask_cors import CORS #Cross Origin Request
 
-app = Flask( __name__ )
+app = Flask( __name__ , static_url_path='/static')
+#CORS(app)
 app.config.from_pyfile( 'blue/config_var.py')
 
 
@@ -67,5 +69,7 @@ def index():
     return "<h1>Welcome to tray-api!</h1>"
 
 
+
 if __name__ == "__main__":
+
     app.run(host='0.0.0.0', ssl_context='adhoc')
