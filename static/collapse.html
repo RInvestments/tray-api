@@ -23,6 +23,17 @@
 }
 
 </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+
+<!-- Latest compiled and minified Locales -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/locale/bootstrap-table-zh-CN.min.js"></script>
+
 <body>
   <div id="companies" style="width:800px; float: right;">
   </div>
@@ -64,7 +75,16 @@ function remove_item( d )
 function selection_to_table()
 {
   d3.select( "#companies" ).html( "" )
-  d3.select( "#companies" ).append( "table" ).attr( "id", "the_table" );
+  d3.select( "#companies" ).append( "table" )
+  .attr( "id", "the_table" )
+  .attr( "data-toggle", "table" )
+  .attr( "data-pagination", "true" )
+  .attr( "data-search", "true" );
+
+
+
+
+
   for( industry in selection ) {
     for( sector in selection[industry] ) {
       for( t in selection[industry][sector] ) {

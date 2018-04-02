@@ -1,0 +1,31 @@
+<html>
+<head>
+<!-- Standard Components -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+
+<style>
+div.bar {
+  display: inline-block;
+  width: 20px;
+  height: 75px;
+  background-color: teal;
+}
+</style>
+
+<!-- My Components -->
+<script src="./collapse_component.js" type="text/javascript"></script>
+
+</head>
+<body>
+  <div id="tyu"></div>
+  <script>
+  var user = new TryClass( "John" );
+  // user.sayHi();
+
+  var ccomp = new CollapseComponent( d3.select("body").select( "#tyu" ) );
+  ccomp.plot_me();
+
+  // d3.select( "#tyu" ).append( "p").html( user.getName() );
+  </script>
+</body>

@@ -7,7 +7,7 @@
 """
 
 from functools import wraps
-from flask import g, request, redirect, url_for, abort
+from flask import g, request, redirect, url_for, abort, session
 from flask_dance.contrib.github import github
 
 import pymongo
@@ -23,16 +23,56 @@ from dbingress.QuotesQueries import QuotesQueries
 ###
 ### Authorization
 ###
+# GITHUB Only
+# def login_required(f):
+#     @wraps(f)
+#     def decorated_function( *args, **kwargs ):
+#         if not github.authorized:
+#             #return redirect( url_for("github.login", next=request.url) )
+#             #abort(401)
+#             return "<h2>You are unauthorized for this page</h2> Please go to /authorize_me<p>--manohar"
+#             return
+#         return f(*args, **kwargs )
+#     return decorated_function
+
+from encription.vigenere import decode
 def login_required(f):
     @wraps(f)
     def decorated_function( *args, **kwargs ):
+        # Github Authorization check
         if not github.authorized:
+            # GET access token Authorization check
+            try:
+                decoded = decode( os.environ['GITHUB_CLIENT_SECRET'], str(request.args.get('authorization_token')) )
+                first5 = decoded[:5]
+                last5  = decoded[-6:]
+            except:
+                return "<h2>KAGO cannot authorize with github. Cannot authorize with GET</h2>"
+
+            if first5 == '<msg>' and last5 == '</msg>': #Decoded seem to be unaltered
+                raw_msg = decoded[5:-6].split(':')
+
+                if len(raw_msg) == 2:
+                    username = raw_msg[0]
+                    session['username'] = raw_msg[0]
+                    return f(*args, **kwargs )
+
+                    #TODO: Check if the token is expired with raw_msg[1].
+                else:
+                    return "<h2>cannot authrize with GET. Invalid raw_msg"
+            else:
+                return "<h2>cannot authorize with github. Cannot authorize with GET</h2>"
+            # return 'decoded: '+decoded+'<p>first5:'+first5+'<p>last5:'+last5
+
             #return redirect( url_for("github.login", next=request.url) )
             #abort(401)
-            return "<h2>You are unauthorized for this page</h2> Please go to /authorize_me<p>--manohar"
-            return
+            return "<h2>You not github.authorized for this page</h2> Please go to /authorize_me<p>--manohar"
+
         return f(*args, **kwargs )
+
+
     return decorated_function
+#
 
 
 ###

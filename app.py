@@ -4,7 +4,7 @@
         Author  : Manohar Kuse
 """
 
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, session
 import os
 #from flask_cors import CORS #Cross Origin Request
 
@@ -52,17 +52,50 @@ app.register_blueprint( github_blueprint, url_prefix="/login") #Github Authoriza
 ############################################
 ############## Authorize_me ################
 ############################################
+from blue.encription.vigenere import decode, encode
+import datetime
 @app.route( "/authorize_me")
 def authorize_me():
     if not github.authorized:
         return redirect( url_for("github.login",  next=request.url) )
     resp = github.get( "/user")
+    git_user_name = resp.json()['login']
 
-    to_return = "<h1>You are Authorized</h1>Authorized github user: " + resp.json()['login']
-    to_return += '<p>' + str( resp.json() )
+    to_return = "<h1>You are Authorized</h1>"
+    to_return += "<p>Authorized github user: " + git_user_name + "</p>"
+    to_return += '<p id="github_raw_data">' + str( resp.json() ) + "</p>"
+
+    # Set session
+    session['username'] = git_user_name
+    to_return += '<p id="session">session|username : '+ session['username'] + '</p>'
+
+    # Generate GET access token
+    generated_time = datetime.datetime.now().strftime( "%Y-%m-%d-%H-%M-%s" )
+    encoded_string = encode( os.environ['GITHUB_CLIENT_SECRET'], '<msg>%s:%s</msg>' %(git_user_name, generated_time) )
+    to_return += '<p id="GET access coupon">\
+        You can also authorize yourself by passing the GET parameter `authorization_token` as: '\
+        + encoded_string + '</p>'
     return to_return
 
+@app.route( "/whoami")
+def whoami():
+    if not github.authorized:
+        return "<h1>unauthorized</h1>I do not recognize you! You may authorize yourself from /authorize_me"
 
+    to_return = "<h1>authorized</h1>"
+
+    # Session
+    to_return += "<p id='user'>I recognize you as: "+ session['username'] + "</p>"
+
+    # Generate GET access token
+    git_user_name = session['username']
+    generated_time = datetime.datetime.now().strftime( "%Y-%m-%d-%H-%M-%s" )
+    encoded_string = encode( os.environ['GITHUB_CLIENT_SECRET'], '<msg>%s:%s</msg>' %(git_user_name, generated_time) )
+    to_return += '<p id="GET access coupon">\
+        You can also authorize yourself by passing the GET parameter `?authorization_token=%s`</p' %(encoded_string)
+
+
+    return to_return
 
 @app.route( "/")
 def index():
