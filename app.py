@@ -80,7 +80,9 @@ def authorize_me():
 @app.route( "/whoami")
 def whoami():
     if not github.authorized:
-        return "<h1>unauthorized</h1>I do not recognize you! You may authorize yourself from /authorize_me"
+        to_return = "<h1>unauthorized</h1><p>I do not recognize you! You may authorize yourself from /authorize_me</p>"
+        to_return += '<p>You IP-addr:'+ request.remote_addr +'</p>'
+        return to_return
 
     to_return = "<h1>authorized</h1>"
 
@@ -92,8 +94,9 @@ def whoami():
     generated_time = datetime.datetime.now().strftime( "%Y-%m-%d-%H-%M-%s" )
     encoded_string = encode( os.environ['GITHUB_CLIENT_SECRET'], '<msg>%s:%s</msg>' %(git_user_name, generated_time) )
     to_return += '<p id="GET access coupon">\
-        You can also authorize yourself by passing the GET parameter `?authorization_token=%s`</p' %(encoded_string)
+        You can also authorize yourself by passing the GET parameter `?authorization_token=%s`</p>' %(encoded_string)
 
+    to_return += '<p>You IP-addr:'+ request.remote_addr +'</p>'
 
     return to_return
 

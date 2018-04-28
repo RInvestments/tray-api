@@ -39,6 +39,10 @@ from encription.vigenere import decode
 def login_required(f):
     @wraps(f)
     def decorated_function( *args, **kwargs ):
+        # localhost pass through
+        if request.remote_addr == '127.0.0.1':
+            return f(*args, **kwargs )
+
         # Github Authorization check
         if not github.authorized:
             # GET access token Authorization check
