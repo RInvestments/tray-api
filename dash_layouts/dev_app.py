@@ -40,12 +40,9 @@ def update_fig( input_value ):
 
     # Get Financial statements data
     #https://35.194.163.228:5000
-    data_frame = lay.r.geturl_as_dict( '/accountingStatements/%s/is/all/Sales_Revenue:Gross%%20Income' %(input_value) )
+    data_frame = lay.r.geturl_as_dict( '/accountingStatements/%s/is/all/Sales_Revenue:Gross%%20Income:Net%%20Income' %(input_value) )
     # return str( data_frame )
 
-    x = []
-    revenue = []
-    gross_income = []
     list_of_tuples = []
     for ticker in data_frame:
         for year in data_frame[ticker]:
@@ -59,10 +56,8 @@ def update_fig( input_value ):
             _year = year_int
             _revenue = data_frame[ticker][year]['Sales/Revenue']
             _gross_income = data_frame[ticker][year]['Gross Income']
-            x.append( _year )
-            revenue.append( _revenue )
-            gross_income.append( _gross_income )
-            list_of_tuples.append( (_year, _revenue, _gross_income) )
+            _net_income = data_frame[ticker][year]['Net Income']
+            list_of_tuples.append( (_year, _revenue, _gross_income, _net_income) )
 
 
     list_of_tuples.sort( key=lambda tup: tup[0] )
@@ -70,10 +65,9 @@ def update_fig( input_value ):
 
     # return '{"data": [{"y": [1, 2, 3], "x": [1, 2, 3]}]}'
     data = []
-    # data.append( { 'x': x, 'y': revenue, 'name':'revenue' } )
-    # data.append( { 'x': x, 'y': gross_income, 'name':'gross income' } )
     data.append( { 'x': [ l[0] for l in li ], 'y': [ l[1] for l in li ], 'name':'revenue' } )
     data.append( { 'x': [ l[0] for l in li ], 'y': [ l[2] for l in li ], 'name':'gross income' } )
+    data.append( { 'x': [ l[0] for l in li ], 'y': [ l[3] for l in li ], 'name':'net income' } )
 
     figure = { 'data': data }
 
