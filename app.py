@@ -14,6 +14,8 @@ app.config.from_pyfile( 'blue/config_var.py')
 
 
 
+
+
 ############################################
 ########## OAuth - flask_dance #############
 ############################################
@@ -106,6 +108,34 @@ def index():
 
 
 
-if __name__ == "__main__":
+######################################
+############## DASH ##################
+######################################
+# import dash
+# import dash_core_components as dcc
+# import dash_html_components as html
+#
+# import uuid
+#
+# from blue.config import login_required
+# from dash_layouts.Layout1 import Layout1
+#
+# This can server dash with flask server (works!)
+# TODO: figure out a way to not be forced to set the layouts and callbacks here.
+# May be get it under a blueprint. Figureout a good way to use all this here.
+# dash_app_url = '/'+str( uuid.uuid4().get_hex() )
+# print 'Start Dash app: ', dash_app_url
+# dash_app = dash.Dash( __name__, server=app, url_base_pathname=dash_app_url ) #can set a static folder here (separate for it for images etc)
+# # dash_app.layout = html.Div( 'Hello Dash Apl')
+#
+# l = Layout1()
+# dash_app.layout = l.render()
+#
+# @login_required #this doesnt seem to work as expected
+# @app.route( '/dash/app1' )
+# def dash_app():
+#     return redirect( dash_app_url )
 
+
+if __name__ == "__main__":
     app.run(host='0.0.0.0', ssl_context='adhoc')
