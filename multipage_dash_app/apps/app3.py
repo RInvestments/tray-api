@@ -16,14 +16,23 @@ from Retriver import Retriver
 r = Retriver('https://localhost:5000')
 url = '/industryInfo/all/all/all'
 data_dict = r.geturl_as_dict(url)
+#
+# options = []
+# for industry in data_dict.keys():
+#     for sector in data_dict[industry].keys():
+#         for ticker in data_dict[industry][sector].keys():
+#             label = '%s %s' %(ticker, data_dict[industry][sector][ticker]['companyName'] )
+#             options.append( {'label': label, 'value': ticker} )
+# dropdown = dcc.Dropdown( options=options, multi=False, id='my-dropdown' )
 
+# Three dropdowns
+data_dict = r.geturl_as_dict( '/industryInfo/all/' )
 options = []
 for industry in data_dict.keys():
-    for sector in data_dict[industry].keys():
-        for ticker in data_dict[industry][sector].keys():
-            label = '%s %s' %(ticker, data_dict[industry][sector][ticker]['companyName'] )
-            options.append( {'label': label, 'value': ticker} )
-dropdown = dcc.Dropdown( options=options, multi=False, id='my-dropdown' )
+    options.append( {'label': industry, 'value': industry} )
+dropdown_industry_select = html.Div( [html.P('Industry'), dcc.Dropdown( options=options, id='industry-select') ] )
+dropdown_sector_select   = html.Div( [html.P('Sector'), dcc.Dropdown( id='sector-select') ] )
+dropdown_ticker_select   = html.Div( [html.P('Ticker'), dcc.Dropdown( id='ticker-select') ] )
 
 graph = dcc.Graph( id='basic-interactions',
             figure={
@@ -44,11 +53,14 @@ graph = dcc.Graph( id='basic-interactions',
 layout= html.Div(
         [
             html.H1('My Data App'),
-            dropdown,
+            # dropdown,
+            dropdown_industry_select,
+            dropdown_sector_select,
+            dropdown_ticker_select,
             html.Div(id='description'),
             html.Div(id='accounting_currency'),
             graph,
-            html.Div( id='debug' )
+            html.Div( id='debug', children="this is debug" )
         ] )
 
 
@@ -108,3 +120,41 @@ def update_fig( input_value ):
     figure = { 'data': data }
 
     return figure
+
+
+@app.callback( Output('sector-select', 'options'), [Input('industry-select', 'value')] )
+def update_sector_dropdown(  industry_value ):
+    if industry_value is None:
+        return None
+
+    industry_value_escaped = industry_value.replace( '/', '_').replace( ' ', '%20')
+
+    # Do query
+    # https://localhost:5000/industryInfo/all/Automotive
+    # return str(r.geturl_as_dict( '/industryInfo/all/%s' %(industry_value) ))
+    data_dict = r.geturl_as_dict( '/industryInfo/all/%s' %(industry_value_escaped) )
+
+    options = []
+    for sector in data_dict[industry_value].keys():
+        options.append( { 'label': sector, 'value': sector} )
+
+
+    return options
+
+@app.callback( Output('debug', 'children'), [Input('industry-select', 'value'), Input('sector-select', 'value')] )
+def update_ticker_dropdown( industry_value, sector_value ):
+    if industry_value is None or sector_value is None:
+        return None
+
+    industry_value_escaped = industry_value.replace( '/', '_').replace( ' ', '%20')
+    sector_value_escaped = sector_value.replace( '/', '_').replace( ' ', '%20')
+
+    data_dict = r.geturl_as_dict( '/industryInfo/all/%s/%s' %(industry_value_escaped,sector_value_escaped) )
+    return str(data_dict)
+
+    to_return = " D ==> "
+    for ticker in data_dict[industry_value][sector_value]:
+        to_return += str(ticker)
+    return to_return
+
+    return "%s : %s " %(industry_value, sector_value)

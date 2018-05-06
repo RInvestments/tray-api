@@ -17,3 +17,6 @@ class Retriver:
         response = urllib2.urlopen(self.server_base_url+url, context=self.ctx)
         data = json.load( response )
         return data
+
+    def geturl( self, url ):
+        return self.server_base_url+url
