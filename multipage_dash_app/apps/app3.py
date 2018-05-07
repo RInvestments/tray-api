@@ -80,7 +80,8 @@ def update_info( input_value ):
         return str(d)
 
 
-@app.callback( Output('basic-interactions', 'figure'), [Input( 'my-dropdown', 'value' ) ] )
+# @app.callback( Output('basic-interactions', 'figure'), [Input( 'my-dropdown', 'value' ) ] )
+@app.callback( Output('basic-interactions', 'figure'), [Input( 'ticker-select', 'value' ) ] )
 # # @dash_app.callback( Output('debug', 'children'), [Input( 'my-dropdown', 'value' ) ] )
 def update_fig( input_value ):
     if input_value is None :
@@ -122,6 +123,7 @@ def update_fig( input_value ):
     return figure
 
 
+
 @app.callback( Output('sector-select', 'options'), [Input('industry-select', 'value')] )
 def update_sector_dropdown(  industry_value ):
     if industry_value is None:
@@ -141,7 +143,8 @@ def update_sector_dropdown(  industry_value ):
 
     return options
 
-@app.callback( Output('debug', 'children'), [Input('industry-select', 'value'), Input('sector-select', 'value')] )
+# @app.callback( Output('debug', 'children'), [Input('industry-select', 'value'), Input('sector-select', 'value')] )
+@app.callback( Output('ticker-select', 'options'), [Input('industry-select', 'value'), Input('sector-select', 'value')] )
 def update_ticker_dropdown( industry_value, sector_value ):
     if industry_value is None or sector_value is None:
         return None
@@ -150,11 +153,14 @@ def update_ticker_dropdown( industry_value, sector_value ):
     sector_value_escaped = sector_value.replace( '/', '_').replace( ' ', '%20')
 
     data_dict = r.geturl_as_dict( '/industryInfo/all/%s/%s' %(industry_value_escaped,sector_value_escaped) )
-    return str(data_dict)
+    # return str(data_dict)
 
-    to_return = " D ==> "
+    options = []
     for ticker in data_dict[industry_value][sector_value]:
-        to_return += str(ticker)
-    return to_return
+        companyName = data_dict[industry_value][sector_value][ticker]['companyName']
+        # to_return += str(ticker) + ":" + companyName
+        options.append( {'label': '%s %s' %(ticker, companyName) , 'value': str(ticker)})
+
+    return options
 
     return "%s : %s " %(industry_value, sector_value)
